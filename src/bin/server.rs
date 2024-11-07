@@ -17,6 +17,7 @@ fn handle_client(mut stream: TcpStream) -> std::io::Result<()> {
         stream.write_all(b"\n")?;
         println!("Wrote transformed line; {}", upper);
     }
+    println!("{:?} exited", thread::current().id());
     Ok(())
 }
 
