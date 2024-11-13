@@ -1,0 +1,14 @@
+syntax = "proto3";
+package calculator;
+
+service Calculator {
+  rpc Compute (ComputeRequest) returns (ComputeResult);
+}
+
+message ComputeRequest {
+  string expression = 1;
+}
+
+message ComputeResult {
+  string result = 1;
+}
