@@ -1,17 +1,16 @@
 [package]
-name = "uppercaser"
+name = "calculator-rpc"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-byteorder = "1.5.0"
 
 [[bin]]
-name = "uppercaser_client"
+name = "calculator_client"
 test = false
 bench = false
 
 [[bin]]
-name = "uppercaser_server"
+name = "calculator_server"
 test = false
 bench = false
