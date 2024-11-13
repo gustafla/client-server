@@ -7,11 +7,13 @@ edition = "2021"
 byteorder = "1.5.0"
 
 [[bin]]
-name = "uppercaser_client"
+name = "uppercaser-client"
+path = "src/client.rs"
 test = false
 bench = false
 
 [[bin]]
-name = "uppercaser_server"
+name = "uppercaser-server"
+path = "src/server.rs"
 test = false
 bench = false
