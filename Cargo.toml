@@ -1,17 +1,4 @@
-[package]
-name = "client-server"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-[dependencies]
-byteorder = "1.5.0"
-
-[[bin]]
-name = "client"
-test = false
-bench = false
-
-[[bin]]
-name = "server"
-test = false
-bench = false
+resolver = "2"
+members = ["uppercaser"]
