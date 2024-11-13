@@ -17,7 +17,11 @@ bench = false
 
 [dependencies]
 prost = "0.13.3"
-tokio = { version = "1.41.1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.41.1", features = [
+  "macros",
+  "rt-multi-thread",
+  "io-std",
+] }
 tonic = "0.12.3"
 
 [build-dependencies]
