@@ -2,3 +2,8 @@
 
 resolver = "2"
 members = ["calculator", "uppercaser"]
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
