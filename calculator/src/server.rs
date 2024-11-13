@@ -1,11 +1,21 @@
-use tonic::{transport::Server, Request, Response, Status};
-
-use calculator::calculator_server::{Calculator, CalculatorServer};
-use calculator::{ComputeRequest, ComputeResult, Error};
+use calculator::{
+    calculator_server::{Calculator, CalculatorServer},
+    ComputeRequest, ComputeResult,
+};
 use std::str::FromStr;
+use thiserror::Error;
+use tonic::{transport::Server, Request, Response, Status};
 
 pub mod calculator {
     tonic::include_proto!("calculator");
+}
+
+#[derive(Error, Debug)]
+enum Error {
+    #[error("invalid token")]
+    InvalidToken,
+    #[error("invalid expression")]
+    InvalidExpression,
 }
 
 #[derive(Clone, Copy)]
@@ -35,7 +45,7 @@ impl FromStr for Token {
             "/" => return Ok(Token::Operator(Op::Div)),
             _ => {}
         }
-        Err(Error::Parse)
+        Err(Error::InvalidToken)
     }
 }
 
@@ -74,15 +84,15 @@ impl MyCalculator {
                     };
                     operator = None;
                 }
-                _ => return Err(Error::Parse),
+                _ => return Err(Error::InvalidExpression),
             }
         }
 
         if operator.is_some() {
-            return Err(Error::Parse);
+            return Err(Error::InvalidExpression);
         }
 
-        a.ok_or(Error::Parse).map(|n| n.to_string())
+        a.ok_or(Error::InvalidExpression).map(|n| n.to_string())
     }
 }
 
@@ -94,20 +104,9 @@ impl Calculator for MyCalculator {
     ) -> Result<Response<ComputeResult>, Status> {
         println!("Got a compute request: {request:?}");
 
-        let result = Self::evaluate(&request.into_inner().expression);
-
-        let reply = match result {
-            Ok(result) => ComputeResult {
-                result: Some(result),
-                error: None,
-            },
-            Err(error) => ComputeResult {
-                result: None,
-                error: Some(error.into()),
-            },
-        };
-
-        Ok(Response::new(reply))
+        Self::evaluate(&request.into_inner().expression)
+            .map(|result| Response::new(ComputeResult { result }))
+            .map_err(|error| Status::invalid_argument(error.to_string()))
     }
 }
 

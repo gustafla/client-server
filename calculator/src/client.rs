@@ -1,5 +1,4 @@
-use calculator::ComputeRequest;
-use calculator::{calculator_client::CalculatorClient, ComputeResult, Error};
+use calculator::{calculator_client::CalculatorClient, ComputeRequest};
 use tokio::io::{self, AsyncBufReadExt, BufReader};
 
 pub mod calculator {
@@ -15,32 +14,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while let Some(expression) = lines.next_line().await? {
         let request = tonic::Request::new(ComputeRequest { expression });
 
-        let result = client.compute(request).await?;
-        match result.into_inner() {
-            ComputeResult {
-                error: None,
-                result: Some(res),
-            } => {
-                println!("{res}");
+        let result = client.compute(request).await;
+        match result {
+            Ok(response) => {
+                println!("{}", response.into_inner().result);
             }
-            ComputeResult {
-                error: Some(error),
-                result,
-            } => {
-                eprintln!(
-                    "Server returned error: {}",
-                    if let Ok(error) = Error::try_from(error) {
-                        format!("{error:?}")
-                    } else {
-                        format!("{error}")
-                    }
-                );
-                if let Some(res) = &result {
-                    eprintln!("... with result: {res}");
-                }
-            }
-            result => {
-                eprintln!("Server returned invalid response {result:?}");
+            Err(status) => {
+                eprintln!("{}: {}", status.code(), status.message());
             }
         }
     }

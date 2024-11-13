@@ -9,12 +9,6 @@ message ComputeRequest {
   string expression = 1;
 }
 
-enum Error {
-  ERROR_UNSPECIFIED = 0;
-  ERROR_PARSE = 1;
-}
-
 message ComputeResult {
-  optional string result = 1;
-  optional Error error = 2;
+  string result = 1;
 }
